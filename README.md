@@ -1,4 +1,4 @@
-# unlocking a locked oracle sql dev account
+# unlocking a locked oracle sql dev account using SQL Plus
 
 Enter username: sys / as sysdba
 Enter passowrd: *empty*
