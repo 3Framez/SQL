@@ -98,4 +98,46 @@ INNER JOIN DEPT D
 ON E.DEPTNO = D.DEPTNO
 WHERE D.DNAME = (SELECT DEPT.DNAME FROM DEPT INNER JOIN EMP ON EMP.DEPTNO = DEPT.DEPTNO  WHERE EMP.ENAME = 'SMITH'); --subquery result is SMITH'S department name
 
-SELECT * FROM DEPT
+
+-- list the total salary of each department 
+SELECT D.DNAME, NVL(SUM(SAL), 0) AS TOTAL_SALARY --replacing null values with 0
+FROM EMP E
+FULL JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO 
+GROUP BY D.DNAME
+ORDER BY 2 DESC
+
+-- List employee names with their commision. If null, put 0
+SELECT ENAME, NVL(COMM,0) AS COMMISION
+FROM EMP 
+
+--COMBINE COMMISION AND SALRY
+SELECT ENAME, NVL(COMM,0), SAL + NVL(COMM,0) AS COMBINED_COMMISION_AND_SALARY, SAL
+FROM EMP
+
+--CONCATENATION
+SELECT CONCAT(CONCAT(CONCAT(LOWER(JOB), ' if '),'JOB = '),JOB)
+FROM EMP
+--2
+SELECT LOWER(JOB)|| ' if '||' JOB = '|| JOB
+FROM EMP
+
+-- LIST the departments and their average salary as well as the number of employees working in each of them
+SELECT D.DNAME, COUNT(EMPNO) as NUM_OF_EMPLOYEES, ROUND(NVL(AVG(SAL),0),2) AS AVAERAGE_SALARY
+FROM EMP E
+FULL JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO 
+GROUP BY D.DNAME
+ORDER BY 3 DESC
+
+--LIST records in which they have same job with employee 7902
+SELECT *
+FROM EMP
+WHERE JOB = (SELECT JOB FROM EMP WHERE EMPNO = 7902 ) --subquery returns the job title of the employee with employee number 7902
+
+--List the number of people that work in each department
+SELECT COUNT(*), DNAME
+FROM EMP E
+FULL JOIN DEPT D
+ON E.DEPTNO = D.DEPTNO 
+GROUP BY D.DNAME
