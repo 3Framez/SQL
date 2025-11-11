@@ -301,5 +301,7 @@ ON E.DEPTNO = D.DEPTNO -- omits the DEPTNO 40, as  there is no relationship
 --FULL OUTER JOIN/FULL JOIN
 SELECT * 
 FROM EMP E FULL JOIN  DEPT D --gives all the data in both tables
-ON E.DEPTNO = D.DEPTNO 
+ON E.DEPTNO = D.DEPTNO;
+
+SELECT * FROM EMP;
 
