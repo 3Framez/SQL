@@ -303,5 +303,91 @@ SELECT *
 FROM EMP E FULL JOIN  DEPT D --gives all the data in both tables
 ON E.DEPTNO = D.DEPTNO;
 
-SELECT * FROM EMP;
 
+
+
+
+--SUBQUERIES WITH JOINS...LIST analysts that work in the research department
+SELECT D.*, E.* 
+FROM (SELECT * FROM EMP WHERE JOB IN ('SALESMAN', 'ANALYST') ) E 
+FULL JOIN (SELECT * FROM DEPT WHERE DNAME = 'RESEARCH') D
+ON E.DEPTNO = D.DEPTNO 
+
+
+-- WHERE EXISTS ; NOT EXISTS. its best used for correlated subqueries
+SELECT * 
+FROM EMP
+WHERE EXISTS (SELECT 'RANDOM' FROM DUAL); --if random exists in the dual, then select * from emp
+
+SELECT * 
+FROM EMP
+WHERE NOT EXISTS (SELECT JOB FROM EMP WHERE JOB = 'PROGRAMMER');
+
+--A correlated subquery that gives department records that dont exist in the employee table, or where the department is located in Boston
+SELECT D.* 
+FROM DEPT D
+WHERE NOT EXISTS (SELECT * FROM EMP E WHERE D.DEPTNO = E.DEPTNO)
+OR LOC = 'CHICAGO'
+
+
+
+
+-- SELF JOIN
+
+-- employees AND their managers
+SELECT E.ENAME AS MANAGER_NAME, M.MGR, M.ENAME AS MANAGED_NAME
+FROM EMP E 
+RIGHT JOIN EMP M
+ON E.EMPNO = M.MGR
+
+
+--CROSS JOIN (cartision product/no join), so each record within the employee tsble (14 in total) would match to each record within the dept table (4 in total) ; 14 * 4 = 56 total records
+SELECT * 
+FROM EMP 
+CROSS JOIN DEPT
+
+--NATURAL JOIN, automatically identifies the columns that exist in both tables and forms a join on them
+SELECT ENAME, MGR, LOC
+FROM EMP NATURAL JOIN DEPT
+
+--JOIN WITH USING. another way to write joins
+SELECT ENAME, MGR, LOC
+FROM EMP JOIN DEPT
+USING(DEPTNO) --because the columns share a similar name, only that column is included or else USING(COLUMN1, COLUMN2)
+
+--EQUIJOINS
+SELECT * 
+FROM EMP E, DEPT D
+WHERE E.DEPTNO = DEPT.DEPTNO --Uses the equal operator
+
+
+--NONEQUIJOINS
+SELECT * FROM JOB_GRADE
+
+SELECT E.ENAME, E.SAL, J.GRADE_LEVEL
+FROM EMP E
+JOIN JOB_GRADE J
+ON E.SAL BETWEEN J.LOWEST_SAL AND J.HIGHEST_SAL --Join both tables on salary between the given ranges and assign a grade level to them 
+
+
+
+
+--CASE STATEMENT like a if/else statement if job == '': print('') else: print('') 
+--Syntax: SELECT <> (CASE <condition_column_name> WHEN <condition_value_name> THEN <'custom_value'> ELSE <'default_value'>) END AS <> FROM <>
+SELECT ENAME, JOB,
+(CASE JOB           --JOB column is used here because the job = values being evaluated...WHEN ''
+WHEN 'PRESIDENT' THEN 'BIG SHOT'
+WHEN 'MANAGER' THEN 'DECIDES THE PAY'
+WHEN 'ANALYST' THEN 'MATH WIZ'
+WHEN 'CLERK' THEN 'HARD WORKER'
+ELSE 'NO COMMENT'
+END) AS DESCRIPTION
+FROM EMP;
+
+-- > if they make 3000 then they're a big shet or else they need to make more money
+SELECT ENAME, JOB, SAL, 
+(CASE --SAL             --SAL column cant be used here because its used as a comparison operator on the next line
+WHEN SAL >= 3000 THEN 'BIG SHOT'
+ELSE 'NEED TO MAKE MORE'
+END) AS PAY_STATUS
+FROM EMP;
